@@ -1,9 +1,9 @@
 # represents a line
-# stores x1,y1,x2,y2, m and d
+#   stores x1,y1,x2,y2, m and d
 
 class Line
-  constructor:(@x1,@y1,@x2,@y2,@draw) ->
-    @draw.line(@x1,@y1,@x2,@y2).stroke({ width: 1, color: 'red' })
+  constructor:(@x1,@y1,@x2,@y2,@draw,@drawLine = true) ->
+    if @drawLine then @draw.line(@x1,@y1,@x2,@y2).stroke({ width: 1, color: 'red' })
     @m = (@y2 - @y1) / (@x2 - @x1)
     @d = @y1 - m * @x1
   passesThroughLine: (other) ->
@@ -19,4 +19,4 @@ class Line
         return true
       else
         return false
-
+this.Line=Line
