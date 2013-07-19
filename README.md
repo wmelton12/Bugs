@@ -17,4 +17,6 @@ Notes about implementation:
   * follow obstacle
  * bug2
   * know starting position
-
+ * Detect Intersection of Point and Polygon
+  * Vertical line passing through point, count intersections with polygons
+    above and below point.
