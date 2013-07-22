@@ -12,10 +12,12 @@ The Code extends the class Bug
             @wallFollowing = false
             @firstLap = true
             @shortestPoint = []
-          move: () ->
+            @encounteredObj = []
+        move: () ->
           	refPoints = @getRefPoints()
           	if(!@wallFollowing)
           		if(@plane.checkCollision(refPoints[0]...)
+          			@encounteredObj = [@x,@y]
           			@wallFollowing = true
           			while(!@plane.checkCollison(refPoints[1]...))
           				@heading -= 1
@@ -39,6 +41,29 @@ The Code extends the class Bug
           			toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
           			@x = toMove[0]
           			@y = toMove[1]
+          			if(@atPoint(@encounteredObs...))
+          				firstLap = false
+          		else
+          			if(!@atPoint(@shortestPoint)
+          				while(!@plane.checkCollison(refPoints[1]...))
+          					@heading -= 1
+          				while(@plane.checkCollision(refPoints[0]))
+          					@heading += 1
+          				toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
+          				@x = toMove[0]
+          				@y = toMove[1]
+          			else 
+          				@encounteredObj = []
+          				@shortestPoint = []
+          				@orientTowardsGoal()
+          				toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
+          				@x = toMove[0]
+          				@y = toMove[1]
+          				@wallFollowing = false
+          orientTowardsGoal: ()->
+          	@heading = Math.atan((@gy - @y) / (@gx - @x))
+          atPoint: (px,py) ->
+          	return @dist(@x,@y,px,py) < 0.001
           dist: (x1,y1,x2,y2) ->
           		return Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2))
           printPlane: () ->
