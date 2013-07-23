@@ -18,5 +18,5 @@ class Bug
   degreesToRadians: (degs) ->
     return degs * (Math.pi / 180)
   radiansToDegrees: (rads) ->
-    reutrn rads * (180 / Math.pi)
+    return rads * (180 / Math.pi)
 this.Bug = Bug

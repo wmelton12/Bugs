@@ -10,5 +10,6 @@ class Plane
   checkCollision: (x,y)-> 
     i = 0
     while( i < @obs.length )
-      if( @obs[i].intersectsPoint(x,y) ) return true
+      if( @obs[i].intersectsPoint(x,y) ) then return true
     return false
+this.Plane=Plane

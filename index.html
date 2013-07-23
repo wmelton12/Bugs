@@ -2,11 +2,22 @@
 <html>
   <head>
     <meta charset = "utf-8" />
-    <script
-src="http://joyrexus.spc.uchicago.edu/resources/coffee-script.js"></script>
-    <script src="Bug.coffee" type="text/coffeescript"></script>
-    <script src="Bug1.coffee" type = "text/coffeescript"></script>
+    <script src="myLibs/basic/svg.js" type="text/javascript"></script>
+    <script src="line.js" type="text/javascript"></script>
+    <script src="Obstacle.js" type="text/javascript"></script>
+    <script src="plane.js" type="text/javascript"></script>
+    <script src="Bug.js" type="text/javascript"></script>
+    <script src="Bug1.js" type = "text/javascript"></script>
   </head>
   <body>
+    <div id="canvas"></div>
+	<script>
+		var draw, obs1list, p;
+ 		alert("hello");
+  	draw = SVG('canvas').size(500, 500);
+  	p = new Plane(draw);
+  	obs1list = [[100, 100], [100, 200], [200, 200], [200, 100]];
+  	p.addObstacle(obs1list);
+  	</script>
   </body>
 </html>
