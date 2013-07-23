@@ -5,6 +5,8 @@ class Plane
     @bugs = []
     @obs[@obs.length] = new Obstacle(points, @draw)
     return @obs[@obs.length - 1]
+  drawPoint: (x,y) ->
+  	@draw.circle(1).move(x,y)
   checkCollision: (x,y)-> 
     i = 0
     while( i < @obs.length )
