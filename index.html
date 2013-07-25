@@ -12,12 +12,28 @@
   <body>
     <div id="canvas"></div>
 	<script>
-		var draw, obs1list, p;
- 		alert("hello");
-  	draw = SVG('canvas').size(500, 500);
-  	p = new Plane(draw);
-  	obs1list = [[100, 100], [100, 200], [200, 200], [200, 100]];
-  	p.addObstacle(obs1list);
-  	</script>
+  alert(Math.PI)
+    var draw = SVG('canvas').size(500, 500);
+
+  var p = new Plane(draw);
+
+  obs1list = [[90, 100],[190,120],[190,210],[110,210]];
+  
+  var obs = p.addObstacle(obs1list);
+
+  var m = new Bug1(10,10, 300,300);
+  
+  m.putInPlane(p);
+
+  draw.circle(5).fill("red").move(300,300);
+  id = setInterval( function() {
+  	 m.move();
+  	 if(m.atGoal())
+  	 {
+  	 	clearTimer(id);
+  	 }
+  }, 10)
+  </script>
+
   </body>
 </html>

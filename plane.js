@@ -6,16 +6,16 @@
     function Plane(draw) {
       this.draw = draw;
       this.obs = [];
+      this.bugs = [];
     }
 
     Plane.prototype.addObstacle = function(points) {
-      this.bugs = [];
       this.obs[this.obs.length] = new Obstacle(points, this.draw);
       return this.obs[this.obs.length - 1];
     };
 
     Plane.prototype.drawPoint = function(x, y) {
-      return this.draw.circle(1).move(x, y);
+      return this.draw.circle(3).move(x, y).attr("fill", "green");
     };
 
     Plane.prototype.checkCollision = function(x, y) {
@@ -25,6 +25,7 @@
         if (this.obs[i].intersectsPoint(x, y)) {
           return true;
         }
+        i++;
       }
       return false;
     };

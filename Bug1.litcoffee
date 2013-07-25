@@ -7,67 +7,94 @@
 The Code extends the class Bug
 
     class Bug1 extends Bug
-          constructor: (@x,@y,@gx,@gy) ->
-            super @x,@y #Pass the values along to the constructor
-            @wallFollowing = false
-            @firstLap = true
-            @shortestPoint = []
-            @encounteredObj = []
-        move: () ->
-              refPoints = @getRefPoints()
+        constructor: (@x,@y,@gx,@gy) ->
+                super @x,@y #Pass the values along to the constructor
+                @wallFollowing = false
+                @firstLap = true
+                @heading = 0
+                @shortestPoint = []
+                @encounteredObj = []
+                
+        turnLeft: ()->
+                #console.log(@heading)
+             @heading+=1
+          turnRight: ()->
+                #console.log(@heading)
+             @heading-=1
+        move: () ->         
               if(!@wallFollowing)
-                  if(@plane.checkCollision(refPoints[0]...))
-                      @encounteredObj = [@x,@y]
+                  if(@frontIsClear())
+                      @orientTowardsGoal()
+                      @x = @x + 0.05 * Math.cos(@degreesToRadians(@heading))
+                      @y = @y + 0.05 * Math.sin(@degreesToRadians(@heading))
+                  else
                       @wallFollowing = true
-                      while(!@plane.checkCollison(refPoints[1]...))
-                          @heading -= 1
-                      
-                      toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
-                      @x = toMove[0]
-                      @y = toMove[1]
-                  else
-                      @x = refPoints[0][0]
-                      @y = refPoint[0][1]
-                  
+                      if @rightIsClear()
+                          while(@rightIsClear())
+                              @turnRight()
+                      else if !@frontIsClear()
+                          while(!@frontIsClear())
+                              @turnLeft()
+                      @x = @x + 0.05 * Math.cos(@degreesToRadians(@heading))
+                      @y = @y + 0.05 * Math.sin(@degreesToRadians(@heading))
+                      @shortestPoint = [@x,@y]
+                      @encounteredObj = [@x,@y]
               else
-                  if(@firstLap)
-                      if(@shortestPoint.length == 0)
-                          @shortestPoint = [@x,@y]
-                      else if(@dist(@x,@y,@gx,@gy) < @dist(@shortestPoint[0],@shortestPoint[1], @gx, @gy))
-                          @shortestPoint = [@x,@y]
-                      while(!@plane.checkCollison(refPoints[1]...))
-                          @heading -= 1
-                      while(@plane.checkCollision(refPoints[0]))
-                          @heading += 1
-                      toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
-                      @x = toMove[0]
-                      @y = toMove[1]
-                      if(@atPoint(@encounteredObs...))
-                          @firstLap = false
-                          
-                  else
-                      if(!@atPoint(@shortestPoint))
-                          while(!@plane.checkCollison(refPoints[1]...))
-                              @heading -= 1
-                          while(@plane.checkCollision(refPoints[0]))
-                              @heading += 1
-                          toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
-                          @x = toMove[0]
-                          @y = toMove[1]
-                      else 
-                          @encounteredObj = []
-                          @shortestPoint = []
-                          @orientTowardsGoal()
-                          toMove = [@x + 0.001 * Math.cos(@degreesToRadians(@heading)), @y + 0.001 * Math.sin(@degreesToRadians(@heading))]
-                          @x = toMove[0]
-                          @y = toMove[1]
-                          @wallFollowing = false
-              if(@plane != null)
-                  @plane.drawPoint(@x,@y)
+                  if @rightIsClear()
+                      while(@rightIsClear())
+                          @turnRight()
+                  else if !@frontIsClear()
+                      while(!@frontIsClear())
+                          @turnLeft()
+                @x = @x + 0.05 * Math.cos(@degreesToRadians(@heading))
+                @y = @y + 0.05 * Math.sin(@degreesToRadians(@heading))
+                if(@firstLap)
+                    if(@atPoint(@encounteredObj...))
+                        @firstLap = false
+                    if(@dist(@x,@y,@gx,@gy) < @dist(@shortestPoint[0],@shortestPoint[1],@gx,@gy))
+                        @shortestPoint = [@x,@y]
+                    if(@atPoint(@encounteredObj))
+                        @firstLap = false
+                else
+                    if(@atPoint(@shortestPoint...))
+                        @orientTowardsGoal()
+                        @wallFollowing=false
+                        @firstLap = true
+                        @x = @x + 0.05 * Math.cos(@degreesToRadians(@heading))
+                        @y = @y + 0.05 * Math.sin(@degreesToRadians(@heading))
+            	if @plane != null then @plane.drawPoint(@x,@y)
+            	
+          frontIsClear: ()->
+              console.log("Bug1 heading: " + @heading)
+              refPoints = @getRefPoints(@heading)
+              if @plane != null
+                  return !@plane.checkCollision(refPoints[0]...)
+              else
+                  return false
+          rightIsClear: ()->
+              refPoints = @getRefPoints()
+              if @plane != null
+                  return !@plane.checkCollision(refPoints[1])
+              else
+                  return false
+          backIsClear: ()->
+              refPoints = @getRefPoints()
+              if @plane != null
+                  return !@plane.checkCollision(refPoints[2])
+              else
+                  return false
+          leftIsClear: ()->
+              refPoints = @getRefPoints()
+              if @plane != null
+                  return !@plane.checkCollision(refPoints[3])
+              else
+                  return false
           orientTowardsGoal: ()->
-              @heading = Math.atan((@gy - @y) / (@gx - @x))
+              @heading = @radiansToDegrees(Math.atan((@gy - @y) / (@gx - @x)))
           atPoint: (px,py) ->
-              return @dist(@x,@y,px,py) < 0.001
+              return @dist(@x,@y,px,py) < 0.05
+          atGoal: ()->
+              return @atPoint(@gx,@gy)
           dist: (x1,y1,x2,y2) ->
                   return Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2))
           printPlane: () ->

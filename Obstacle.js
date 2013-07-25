@@ -4,41 +4,40 @@
 
   Obstacle = (function() {
     function Obstacle(points, draw) {
-      var g, i;
+      var i;
       this.points = points;
       this.draw = draw;
       this.poly = this.draw.polygon(this.points).fill('black').stroke({
         width: 1
-      }).attr('id', "" + this.points[0][0] + " + " + this.points[0][1]);
+      }).attr('id', "" + this.points[0][0] + " + " + this.points[0][1]).attr("transform", "translate(0,0)");
       this.edges = [];
       i = 1;
       while (i < this.points.length) {
-        g = new Line(this.points[i - 1][0], this.points[i - 1][1], this.points[i][0], this.points[i][1], this.draw);
-        this.edges.push(g);
+        this.edges[this.edges.length] = new Line(this.points[i - 1][0], this.points[i - 1][1], this.points[i][0], this.points[i][1], this.draw);
+        i++;
       }
-      g = new Line(this.points[0][0], this.points[0][1], this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.draw);
-      this.edges.push(g);
+      this.edges[this.edges.length] = new Line(this.points[this.points.length - 1][0], this.points[this.points.length - 1][1], this.points[0][0], this.points[0][1], this.draw);
       this.bb = document.getElementById(this.poly.attr('id')).getBBox();
     }
 
     Obstacle.prototype.intersectsPoint = function(x, y) {
-      var i, l, p, pointsBeforePoint;
-      pointsBeforePoint = [];
-      if (!((this.bb.y < y && y < this.bb.y + this.bb.height))) {
+      var count, j, l, p;
+      if (!((this.bb.y < y && y < this.bb.y + this.bb.height) && (this.bb.x < x && x < this.bb.x + this.bb.width))) {
         return false;
       }
-      i = 0;
-      l = new Line(0, y, this.draw.size()[0], y, this.draw, false);
-      while (i < this.edges.length) {
-        if (l.passesThroughLine(this.edges[i])) {
-          p = l.intersection(this.edges[i]);
+      j = 0;
+      count = 0;
+      l = new Line(0, y, 1000, y, this.draw, false);
+      while (j < this.edges.length) {
+        if (l.passesThroughLine(this.edges[j])) {
+          p = l.intersection(this.edges[j]);
           if (p[0] <= x) {
-            pointsBeforePoint.push(p);
+            count++;
           }
         }
-        i++;
+        j++;
       }
-      return !(pointsBeforePoint.length % 2);
+      return count % 2 === 1;
     };
 
     return Obstacle;

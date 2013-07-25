@@ -7,21 +7,21 @@
       this.x = x;
       this.y = y;
       this.plane = null;
-      this.heading = 0;
     }
 
     Bug.prototype.move = function() {};
 
     Bug.prototype.getRefPoints = function() {
-      var backAngle, leftAngle, points, rightAnge;
+      var backAngle, leftAngle, points, rightAngle;
+      console.log("Bug heading: " + this.heading);
       points = [];
-      points[points.length] = [this.x + 0.001 * Math.cos(this.degreesToRadians(this.heading)), this.y + 0.001 * Math.sin(this.degreesToRadians(this.heading))];
-      rightAnge = this.degreesToRadians(this.heading - 90);
-      points[points.length] = [this.x + 0.001 * Math.cos(rightAngle), this.y + 0.001 * Math.sin(rightAngle)];
-      backAngle = this.heading + 180;
-      points[points.length] = [this.x + 0.001 * Math.cos(backAngle), this.y + 0.001 * Math.sin(backAngle)];
-      leftAngle = this.heading + 90;
-      points[points.length] = [this.x + 0.001 * Math.cos(leftAngle), this.y + 0.01 * Math.sin(leftAngle)];
+      points[points.length] = [this.x + 0.05 * Math.cos(this.degreesToRadians(this.heading)), this.y + 0.05 * Math.sin(this.degreesToRadians(this.heading))];
+      rightAngle = this.degreesToRadians(this.heading - 90);
+      points[points.length] = [this.x + 0.05 * Math.cos(this.rightAngle), this.y + 0.05 * Math.sin(this.rightAngle)];
+      backAngle = this.degreesToRadians(this.heading + 180);
+      points[points.length] = [this.x + 0.05 * Math.cos(backAngle), this.y + 0.05 * Math.sin(backAngle)];
+      leftAngle = this.degreesToRadians(this.heading + 90);
+      points[points.length] = [this.x + 0.05 * Math.cos(leftAngle), this.y + 0.05 * Math.sin(leftAngle)];
       return points;
     };
 
@@ -30,11 +30,11 @@
     };
 
     Bug.prototype.degreesToRadians = function(degs) {
-      return degs * (Math.pi / 180);
+      return degs * (Math.PI / 180);
     };
 
     Bug.prototype.radiansToDegrees = function(rads) {
-      return rads * (180 / Math.pi);
+      return rads * (180 / Math.PI);
     };
 
     return Bug;

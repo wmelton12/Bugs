@@ -5,6 +5,6 @@ p = new Plane(draw)
 
 obs1list = [[100,100],[100,200],[200,200],[200,100]]
 
-p.addObstacle(obs1list)
+obs = p.addObstacle(obs1list)
 
-
+alert(obs.intersectsPoint(150,150))

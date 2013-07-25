@@ -15,90 +15,143 @@
       Bug1.__super__.constructor.call(this, this.x, this.y);
       this.wallFollowing = false;
       this.firstLap = true;
+      this.heading = 0;
       this.shortestPoint = [];
       this.encounteredObj = [];
     }
 
+    Bug1.prototype.turnLeft = function() {
+      return this.heading += 1;
+    };
+
+    Bug1.prototype.turnRight = function() {
+      return this.heading -= 1;
+    };
+
+    Bug1.prototype.move = function() {
+      if (!this.wallFollowing) {
+        if (this.frontIsClear()) {
+          this.orientTowardsGoal();
+          this.x = this.x + 0.05 * Math.cos(this.degreesToRadians(this.heading));
+          this.y = this.y + 0.05 * Math.sin(this.degreesToRadians(this.heading));
+        } else {
+          this.wallFollowing = true;
+          if (this.rightIsClear()) {
+            while (this.rightIsClear()) {
+              this.turnRight();
+            }
+          } else if (!this.frontIsClear()) {
+            while (!this.frontIsClear()) {
+              this.turnLeft();
+            }
+          }
+          this.x = this.x + 0.05 * Math.cos(this.degreesToRadians(this.heading));
+          this.y = this.y + 0.05 * Math.sin(this.degreesToRadians(this.heading));
+          this.shortestPoint = [this.x, this.y];
+          this.encounteredObj = [this.x, this.y];
+        }
+      } else {
+        if (this.rightIsClear()) {
+          while (this.rightIsClear()) {
+            this.turnRight();
+          }
+        } else if (!this.frontIsClear()) {
+          while (!this.frontIsClear()) {
+            this.turnLeft();
+          }
+        }
+      }
+      this.x = this.x + 0.05 * Math.cos(this.degreesToRadians(this.heading));
+      this.y = this.y + 0.05 * Math.sin(this.degreesToRadians(this.heading));
+      if (this.firstLap) {
+        if (this.atPoint.apply(this, this.encounteredObj)) {
+          this.firstLap = false;
+        }
+        if (this.dist(this.x, this.y, this.gx, this.gy) < this.dist(this.shortestPoint[0], this.shortestPoint[1], this.gx, this.gy)) {
+          this.shortestPoint = [this.x, this.y];
+        }
+        if (this.atPoint(this.encounteredObj)) {
+          return this.firstLap = false;
+        }
+      } else {
+        if (this.atPoint.apply(this, this.shortestPoint)) {
+          this.orientTowardsGoal();
+          this.wallFollowing = false;
+          this.firstLap = true;
+          this.x = this.x + 0.05 * Math.cos(this.degreesToRadians(this.heading));
+          return this.y = this.y + 0.05 * Math.sin(this.degreesToRadians(this.heading));
+        }
+      }
+    };
+
+    if (Bug1.plane !== null) {
+      Bug1.plane.drawPoint(Bug1.x, Bug1.y);
+    }
+
+    Bug1.prototype.frontIsClear = function() {
+      var refPoints, _ref;
+      console.log("Bug1 heading: " + this.heading);
+      refPoints = this.getRefPoints(this.heading);
+      if (this.plane !== null) {
+        return !(_ref = this.plane).checkCollision.apply(_ref, refPoints[0]);
+      } else {
+        return false;
+      }
+    };
+
+    Bug1.prototype.rightIsClear = function() {
+      var refPoints;
+      refPoints = this.getRefPoints();
+      if (this.plane !== null) {
+        return !this.plane.checkCollision(refPoints[1]);
+      } else {
+        return false;
+      }
+    };
+
+    Bug1.prototype.backIsClear = function() {
+      var refPoints;
+      refPoints = this.getRefPoints();
+      if (this.plane !== null) {
+        return !this.plane.checkCollision(refPoints[2]);
+      } else {
+        return false;
+      }
+    };
+
+    Bug1.prototype.leftIsClear = function() {
+      var refPoints;
+      refPoints = this.getRefPoints();
+      if (this.plane !== null) {
+        return !this.plane.checkCollision(refPoints[3]);
+      } else {
+        return false;
+      }
+    };
+
+    Bug1.prototype.orientTowardsGoal = function() {
+      return this.heading = this.radiansToDegrees(Math.atan((this.gy - this.y) / (this.gx - this.x)));
+    };
+
+    Bug1.prototype.atPoint = function(px, py) {
+      return this.dist(this.x, this.y, px, py) < 0.05;
+    };
+
+    Bug1.prototype.atGoal = function() {
+      return this.atPoint(this.gx, this.gy);
+    };
+
+    Bug1.prototype.dist = function(x1, y1, x2, y2) {
+      return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+    };
+
+    Bug1.prototype.printPlane = function() {
+      return console.log(this.plane);
+    };
+
     return Bug1;
 
   })(Bug);
-
-  ({
-    move: function() {
-      var refPoints, toMove, _ref, _ref1, _ref2, _ref3;
-      refPoints = this.getRefPoints();
-      if (!this.wallFollowing) {
-        if ((_ref = this.plane).checkCollision.apply(_ref, refPoints[0])) {
-          this.encounteredObj = [this.x, this.y];
-          this.wallFollowing = true;
-          while (!(_ref1 = this.plane).checkCollison.apply(_ref1, refPoints[1])) {
-            this.heading -= 1;
-          }
-          toMove = [this.x + 0.001 * Math.cos(this.degreesToRadians(this.heading)), this.y + 0.001 * Math.sin(this.degreesToRadians(this.heading))];
-          this.x = toMove[0];
-          this.y = toMove[1];
-        } else {
-          this.x = refPoints[0][0];
-          this.y = refPoint[0][1];
-        }
-      } else {
-        if (this.firstLap) {
-          if (this.shortestPoint.length === 0) {
-            this.shortestPoint = [this.x, this.y];
-          } else if (this.dist(this.x, this.y, this.gx, this.gy) < this.dist(this.shortestPoint[0], this.shortestPoint[1], this.gx, this.gy)) {
-            this.shortestPoint = [this.x, this.y];
-          }
-          while (!(_ref2 = this.plane).checkCollison.apply(_ref2, refPoints[1])) {
-            this.heading -= 1;
-          }
-          while (this.plane.checkCollision(refPoints[0])) {
-            this.heading += 1;
-          }
-          toMove = [this.x + 0.001 * Math.cos(this.degreesToRadians(this.heading)), this.y + 0.001 * Math.sin(this.degreesToRadians(this.heading))];
-          this.x = toMove[0];
-          this.y = toMove[1];
-          if (this.atPoint.apply(this, this.encounteredObs)) {
-            this.firstLap = false;
-          }
-        } else {
-          if (!this.atPoint(this.shortestPoint)) {
-            while (!(_ref3 = this.plane).checkCollison.apply(_ref3, refPoints[1])) {
-              this.heading -= 1;
-            }
-            while (this.plane.checkCollision(refPoints[0])) {
-              this.heading += 1;
-            }
-            toMove = [this.x + 0.001 * Math.cos(this.degreesToRadians(this.heading)), this.y + 0.001 * Math.sin(this.degreesToRadians(this.heading))];
-            this.x = toMove[0];
-            this.y = toMove[1];
-          } else {
-            this.encounteredObj = [];
-            this.shortestPoint = [];
-            this.orientTowardsGoal();
-            toMove = [this.x + 0.001 * Math.cos(this.degreesToRadians(this.heading)), this.y + 0.001 * Math.sin(this.degreesToRadians(this.heading))];
-            this.x = toMove[0];
-            this.y = toMove[1];
-            this.wallFollowing = false;
-          }
-        }
-      }
-      if (this.plane !== null) {
-        return this.plane.drawPoint(this.x, this.y);
-      }
-    },
-    orientTowardsGoal: function() {
-      return this.heading = Math.atan((this.gy - this.y) / (this.gx - this.x));
-    },
-    atPoint: function(px, py) {
-      return this.dist(this.x, this.y, px, py) < 0.001;
-    },
-    dist: function(x1, y1, x2, y2) {
-      return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-    },
-    printPlane: function() {
-      return console.log(this.plane);
-    }
-  });
 
   this.Bug1 = Bug1;
 

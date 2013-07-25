@@ -16,13 +16,34 @@
           color: 'red'
         });
       }
-      this.m = (this.y2 - this.y1) / (this.x2 - this.x1);
-      this.d = this.y1 - this.m * this.x1;
+      this.vertical = false;
+      if (this.x1 === this.x2) {
+        this.vertical = true;
+      }
+      this.m = null;
+      this.d = null;
+      if (!this.vertical) {
+        this.m = (this.y2 - this.y1) / (this.x2 - this.x1);
+        this.d = this.y1 - this.m * this.x1;
+      }
     }
+
+    Line.prototype["eval"] = function(x) {
+      var flag;
+      flag = null;
+      if (this.vertical) {
+        flag = null;
+      } else {
+        flag = this.m * x + this.d;
+      }
+      return flag;
+    };
 
     Line.prototype.intersection = function(other) {
       var x, y;
-      if (this.m === other.m && this.d === other.d) {
+      if (this.vertical) {
+        return other["eval"](this.x1);
+      } else if (this.m === other.m && this.d === other.d) {
         return true;
       } else if (this.m === other.m && this.d !== other.d) {
         return false;
@@ -34,13 +55,25 @@
     };
 
     Line.prototype.passesThroughLine = function(other) {
-      var x, y, _ref;
-      _ref = this.intersection(other), x = _ref[0], y = _ref[1];
-      if (((this.x1 < x && x < this.x2) || (this.x2 < x && x < this.x1)) && ((this.y2 < y && y < this.y1) || (this.y2 < y && y < this.y1)) && ((other.x1 < x && x < other.x2) || (other.x2 < x && x < other.x1)) && ((other.y1 < y && y < other.y2) || (other.y2 < y && y < other.y1))) {
-        return true;
+      var flag, p, x, y;
+      if (!this.vertical) {
+        p = this.intersection(other);
+        if (p === true) {
+          return true;
+        }
+        if (p === false) {
+          return false;
+        }
+        x = p[0];
+        y = p[1];
+        flag = (((this.x1 < x && x < this.x2)) || ((this.x2 < x && x < this.y2))) && (((other.x1 < x && x < other.x2)) || ((other.x2 < x && x < other.x1)));
       } else {
-        return false;
+        p = this.intersection(other);
+        x = p[0];
+        y = p[1];
+        flag = (((this.y1 < y && y < this.y2)) || ((this.y2 < y && y < this.y1))) && (((other.x1 < x && x < other.x2)) || ((other.x2 < x && x < other.x1)));
       }
+      return flag;
     };
 
     return Line;
